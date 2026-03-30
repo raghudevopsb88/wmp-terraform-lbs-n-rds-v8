@@ -3,6 +3,15 @@ resource "aws_db_parameter_group" "main" {
   family = "postgres16"
 }
 
+resource "aws_db_subnet_group" "main" {
+  name       = "wmp-${var.env}"
+  subnet_ids = var.subnet_ids
+
+  tags = {
+    Name = "wmp-${var.env}"
+  }
+}
+
 resource "aws_db_instance" "main" {
   allocated_storage    = var.allocated_storage
   db_name              = "default_dummy"
@@ -13,5 +22,6 @@ resource "aws_db_instance" "main" {
   password             = "WmpUser#1234"
   parameter_group_name = aws_db_parameter_group.main.name
   skip_final_snapshot  = true
+  db_subnet_group_name = aws_db_subnet_group.main.name
 }
 

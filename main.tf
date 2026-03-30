@@ -2,7 +2,9 @@ module "databases" {
   for_each = var.databases
   source   = "./modules/rds"
 
-  env               = var.env
+  env        = var.env
+  subnet_ids = var.subnets
+
   allocated_storage = each.value["allocated_storage"]
 }
 
