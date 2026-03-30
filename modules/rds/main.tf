@@ -45,8 +45,7 @@ resource "aws_security_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
-  #identifier           = "wmp-${var.env}"
-
+  identifier             = "wmp-${var.env}"
   allocated_storage      = var.allocated_storage
   db_name                = "default_dummy"
   engine                 = "postgres"
