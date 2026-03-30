@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.4"
+    }
+  }
+}
 resource "aws_db_parameter_group" "main" {
   name   = "wmp-${var.env}"
   family = "postgres16"
@@ -51,4 +59,14 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main.id]
 }
+
+resource "null_resource" "schema_load" {
+  provisioner "local-exec" {
+    command = <<EOF
+curl -o global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+PGPASSWORD='WmpUser#1234' /usr/pgsql-16/bin/psql  'host=${aws_db_instance.main.endpoint} port=5432 dbname=default_dummy user=wmpuser sslmode=verify-full sslrootcert=./global-bundle.pem' <${path.module}/setup.sql
+EOF
+  }
+}
+
 
